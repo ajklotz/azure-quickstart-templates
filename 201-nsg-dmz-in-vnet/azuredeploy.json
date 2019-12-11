@@ -2,12 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "type": "string",
-      "metadata": {
-        "description": "This is the region where the resources will be created"
-      }
-    },
     "virtualNetworkName": {
       "type": "string",
       "defaultValue": "First_ARM_VNet",
@@ -62,6 +56,13 @@
       "defaultValue": "DB_NSG",
       "metadata": {
         "description": "This is name of the networkSecurityGroup that will be assigned to Database Subnet"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
       }
     }
   },
@@ -129,7 +130,7 @@
             "name": "Block_RDP_Internet",
             "properties": {
               "description": "Block RDP",
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "Internet",
@@ -240,7 +241,7 @@
         },
         "subnets": [
           {
-            "name": "FESubnetName",
+            "name": "FESubnet",
             "properties": {
               "addressPrefix": "[parameters('FESubnetPrefix')]",
               "networkSecurityGroup": {
@@ -249,7 +250,7 @@
             }
           },
           {
-            "name": "AppSubnetName",
+            "name": "AppSubnet",
             "properties": {
               "addressPrefix": "[parameters('AppSubnetPrefix')]",
               "networkSecurityGroup": {
@@ -258,7 +259,7 @@
             }
           },
           {
-            "name": "DBSubnetName",
+            "name": "DBSubnet",
             "properties": {
               "addressPrefix": "[parameters('DBSubnetPrefix')]",
               "networkSecurityGroup": {

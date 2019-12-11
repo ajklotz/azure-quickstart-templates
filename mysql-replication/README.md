@@ -1,11 +1,20 @@
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure%2Fazure-quickstart-templates%2Fmaster%2Fmysql-replication%2Fazuredeploy.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
+    <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
 </a>
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fmysql-replication%2Fazuredeploy.json" target="_blank">
-  <img src="http://armviz.io/visualizebutton.png"/>
+  <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
 </a>
 
 # MySQL Replication Template
+
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/PublicLastTestDate.svg" />&nbsp;
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/PublicDeployment.svg" />&nbsp;
+
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/FairfaxLastTestDate.svg" />&nbsp;
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/FairfaxDeployment.svg" />&nbsp;
+
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/BestPracticeResult.svg" />&nbsp;
+<IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/mysql-replication/CredScanResult.svg" />&nbsp;
 
 This template deploys a MySQL replication environment with one master and one slave servers.  It has the following capabilities:
 
@@ -20,15 +29,17 @@ This template deploys a MySQL replication environment with one master and one sl
 You can deploy the template with Azure Portal, or PowerShell, or Azure cross platform command line tools.  The example here uses PowerShell to deploy.
 
 **Default deployment**
-* Open Azure Powershell console, and log in by running Add-AzureAccount command.
-* Create a resource group:
+* Open Azure Powershell console, and log in by running Login-AzureRmAccount command.
 ```sh
-> Switch-AzureMode AzureResourceManager
-> New-AzureResourceGroup -Name "mysqlrg"-Location "East US"
+> Login-AzureRmAccount 
+```
+* Next, create a resource group:
+```sh
+> New-AzureRMResourceGroup -Name "mysqlrg"-Location "East US"
 ```
 * Create a deployment:
 ```sh
-> New-AzureResourceGroupDeployment -ResourceGroupName mysqlrg -TemplateFile .\azuredeploy.json -TemplateParameterFile .\azuredeploy.parameters.json
+> New-AzureRMResourceGroupDeployment -ResourceGroupName mysqlrg -TemplateFile .\azuredeploy.json -TemplateParameterFile .\azuredeploy.parameters.json
 ```
 **Custom deployment**
 * Take a look at AzureDeploy.json to see if you need to make any customization that's not exposed through the template parameters, for example, disk configurations.  If you do, download the template and make modifications locally.
@@ -172,4 +183,5 @@ License
 ----
 
 MIT
+
 
