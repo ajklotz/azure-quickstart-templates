@@ -2,7 +2,7 @@
 
 This document describes the best practices for reviewing and troubleshooting Azure Resource Manager (ARM) Templates, including Azure Applications for the Azure Marketplaces. This document is intended to help you design effective templates or troubleshoot existing templates for getting applications certified for the Azure Marketplace and Azure QuickStart templates.  
 
-This repository contains all currently available Azure Resource Manager templates contributed by the community. A searchable template index is maintained at <https://azure.microsoft.com/en-us/documentation/templates/>.
+This repository contains all currently available Azure Resource Manager templates contributed by the community. A searchable template index is maintained at <https://azure.microsoft.com/documentation/templates/>.
 
 To contribute a sample to this repo, you must read and follow these best practices as well as the guidelines listed in the [**Contribution guide**](/1-CONTRIBUTION-GUIDE/README.md#contribution-guide).  
 
@@ -32,7 +32,8 @@ An Azure Application or QuickStart sample must contain, at a minimum, the follow
 |:---------------------------------------- |:----------------------------------------------------- |:---------------------------------------- |
 | UI Definition File    | createUiDefinition.json | n/a |  
 | Template File | mainTemplate.json | azuredeploy.json |  
-| Parameters File | n/a | azuredeploy.parameters.json |  
+| Parameters File (Public) | n/a | azuredeploy.parameters.json  |  
+| Parameters File (US Gov) | n/a | azuredeploy.parameters.us.json |
 | Read Me File | Not required | README.md |  
 | [SECURITY.md file](https://help.github.com/en/articles/adding-a-security-policy-to-your-repository) | Not required | SECURITY.md |
 | QuickStart Description | n/a | metadata.json |
@@ -57,7 +58,7 @@ Other resource types are supported but will require support from the on-boarding
 * Variables must not be used for apiVersions.  The apiVersion affects the shape of the resource and often cannot be updated without updating all the resources that use a particular version.
 * Use a copy loop for creating repeating patterns of JSON in variables.
 * Remove all unused variables from all templates.
-* Avoid concatenating variable names for conditional scenarios – use template language expressions. For more information, see [https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-functions)
+* Avoid concatenating variable names for conditional scenarios – use template language expressions. For more information, see [https://docs.microsoft.com/azure/azure-resource-manager/resource-group-template-functions](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-template-functions)
 
 ## Parameters
 
@@ -97,7 +98,7 @@ Top-level template properties must be in the following order:
 
 ```json
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/...",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/...",
   "contentVersion": "1.0.0.0",
   "apiProfile": "...",
   "parameters": {},
@@ -116,12 +117,17 @@ The common properties should be authored consistently to provide for understanda
         {
             "comments": "if any",
             "condition": true,
+            "scope": "% parent scope %",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-12-01",
             "name": "[concat(parameters('virtualMachineName'), copyIndex(1))]",
             "location": "[parameters('location')]",
-            "sku": { ... },
+            "zones": [],
+            "sku": {},
             "kind": "",
+            "scale": "",
+            "plan": {},
+            "identity": {},
             "copy": {
                 "name": "vmLoop",
                 "count": "[parameters('numberOfVMs')]"
@@ -129,13 +135,13 @@ The common properties should be authored consistently to provide for understanda
             "dependsOn": [
                 "nicLoop"
             ],
-            "tags": { ... },
+            "tags": {},
             "properties": {}
 ```
 
 ### Empty and Null Properties
 
-All empty or null properties that are not required must be exculded from the template samples.  This includes empty objects {}, arrays [], strings "", and any property that has a null value.
+All empty or null properties that are not required must be excluded from the template samples.  This includes empty objects {}, arrays [], strings "", and any property that has a null value.  The execptions to this rule are the top-level template properties: parameters, variables, functions, resources and outputs.
 
 ### dependsOn  
 
@@ -244,7 +250,7 @@ The following example shows how to use the reference function for the `storageUr
 
 * All `apiVersion` references for each specific resource type must use the same apiVersion.
 
-  To verify the API versions that are supported by a particular `Provider.Namespace/resourceType`, see the [Supported API versions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-supported-services#supported-api-versions) topic.  
+  To verify the API versions that are supported by a particular `Provider.Namespace/resourceType`, see the [Supported API versions](https://docs.microsoft.com/azure/azure-resource-manager/resource-manager-supported-services#supported-api-versions) topic.  
 
 ### VM Extensions
 
@@ -309,8 +315,7 @@ To do this you must define two standard parameters:
           "metadata": {
               "description": "The base URI where artifacts required by this template are located including a trailing '/'"
           },
-          "defaultValue": "[deployment().properties.templateLink.uri]",  //use this for the Azure marketplace
-          "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/[name of sample folder]/" // use this for a Quickstart in this repo (we're working on fixing this to match the marketplace...)
+          "defaultValue": "[deployment().properties.templateLink.uri]"
       },
       "_artifactsLocationSasToken": {
           "type": "securestring",
@@ -379,12 +384,12 @@ The following code provides an example:
   "type": "Microsoft.Compute/virtualMachines",
   "name": "[parameters('vmName')]",
   "location": "[parameters('location')]",
+  "plan": {
+    "name": "ContosoSKU",
+    "publisher":"Contoso",
+    "product":"ContosoProduct"
+  },
   "properties": {
-    "plan": {
-      "name": "ContosoSKU",
-      "publisher":"Contoso",
-      "product":"ContosoProduct"
-    },
     "hardwareProfile": {
       "vmSize": "[parameters('vmSize')]"
     },
